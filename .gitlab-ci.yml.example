@@ -1,0 +1,134 @@
+spec:
+  inputs:
+    release_type:
+      type: string
+      description: "Specify a release type: standard, hotfix, or pre-release"
+      options: ["none", "standard", "hotfix", "pre-release"]
+      default: "none"
+    release_version:
+      type: string
+      description: "Explicit version to tag to a release"
+      default: ""
+    release_notes_branch:
+      type: string
+      description: "Override release notes branch (default: release-notes)"
+      default: "release-notes"
+
+---
+
+image: container-registry.example.com/nso/ci-runner-image
+
+variables:
+  COMPOSE_PROJECT_NAME: pyndev-${CI_JOB_ID}
+  UV_LINK_MODE: copy
+  RELEASE_TYPE: $[[ inputs.release_type ]]
+  RELEASE_VERSION: $[[ inputs.release_version ]]
+  RELEASE_NOTES_BRANCH: $[[ inputs.release_notes_branch ]]
+
+stages:
+  - lint
+  - build
+  - test
+  - release
+  - publish
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: never
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+
+.nso-version-matrix:
+  parallel:
+    matrix:
+      - NSO_VERSION: ["6.5.7", "6.6.3"]
+
+.skip-on-release-updates:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "release-notes"
+      when: never
+    - if: $RELEASE_TYPE != "none"
+      when: never
+    - when: on_success
+
+.skip-on-release:
+  rules:
+    - if: $RELEASE_TYPE != "none"
+      when: never
+    - when: on_success
+
+default:
+  before_script:
+    - just init
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+      - unknown_failure
+
+lint:
+  extends:
+    - .skip-on-release
+    - .nso-version-matrix
+  stage: lint
+  script:
+    - just lint
+
+build:
+  extends:
+    - .skip-on-release-updates
+    - .nso-version-matrix
+  stage: build
+  script:
+    - just sync
+
+test:
+  extends:
+    - .skip-on-release-updates
+    - .nso-version-matrix
+  stage: test
+  rules:
+    - when: never  # DISABLED: this is an example, need to confirm your environment to enable
+  script:
+    - just sync
+    - just auto-test
+  after_script:
+    - just auto-test-down
+  artifacts:
+    when: always
+    paths:
+      - nso/test/test-logs/
+    reports:
+      junit: nso/test/test-logs/all-xunit.xml
+
+release:
+  stage: release
+  variables:
+    GIT_DEPTH: 0
+  environment:
+    name: production
+    action: prepare
+  rules:
+    - when: never  # DISABLED: this is an example, need to confirm your environment to enable
+    - if: $RELEASE_TYPE == "standard"
+    - if: $RELEASE_TYPE == "hotfix"
+  script:
+    - uv run --no-sync release --release-type "$RELEASE_TYPE" --notes-branch "$RELEASE_NOTES_BRANCH" --explicit-version "$RELEASE_VERSION"
+
+publish:
+  extends: .nso-version-matrix
+  stage: publish
+  rules:
+    - when: never  # DISABLED: this is an example, need to confirm your environment to enable
+    - if: $CI_COMMIT_TAG
+    - if: $RELEASE_TYPE == "pre-release"
+  script:
+    - just sync
+    - just build
+    - just publish
+    - |
+      VERSION="${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}"
+      just build-nso-image "$VERSION"
+      docker push container-registry.example.com/nso/pyndev/nso:"$NSO_VERSION"-"$VERSION"
