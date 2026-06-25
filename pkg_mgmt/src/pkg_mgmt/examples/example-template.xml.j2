@@ -1,0 +1,22 @@
+{% if python %}
+<config-template xmlns="http://tail-f.com/ns/config/1.0">
+{% else %}
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="{{ name }}">
+{% endif %}
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>{/device}</name>
+{% if python %}
+      <description>{$DESCRIPTION}</description>
+{% else %}
+      <description>{/description}</description>
+{% endif %}
+      <!-- Insert valid namespace nodes here
+      <config>
+
+      </config>
+      -->
+    </device>
+  </devices>
+</config-template>

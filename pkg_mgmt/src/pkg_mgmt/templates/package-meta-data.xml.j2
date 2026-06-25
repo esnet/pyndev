@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncs-package xmlns="http://tail-f.com/ns/ncs-packages">
+  <name>{{ name }}</name>
+  <package-version>{{ version }}</package-version>
+  <description>{{ description }}</description>
+  <ncs-min-version>{{ ncs_version }}</ncs-min-version>
+{% for comp in python.components %}
+  <component>
+    <name>{{ comp.name }}</name>
+{% if comp.application %}
+    <application>
+      <python-class-name>{{ [comp.project, comp.module, comp.application] | select | join('.') }}</python-class-name>
+    </application>
+{% endif %}
+{% if comp.upgrade %}
+    <upgrade>
+      <python-class-name>{{ [comp.project, comp.module, comp.upgrade] | select | join('.') }}</python-class-name>
+    </upgrade>
+{% endif %}
+  </component>
+{% endfor %}
+{% for dep in dependencies %}
+  <required-package>
+    <name>{{ dep }}</name>
+  </required-package>
+{% endfor %}
+</ncs-package>

@@ -1,0 +1,87 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm">
+    <read-default>deny</read-default>
+    <write-default>deny</write-default>
+    <exec-default>deny</exec-default>
+    <cmd-read-default xmlns="http://tail-f.com/yang/acm">deny</cmd-read-default>
+    <cmd-exec-default xmlns="http://tail-f.com/yang/acm">deny</cmd-exec-default>
+    <groups>
+      <group>
+        <name>ncsadmin</name>
+        <user-name>private</user-name>
+      </group>
+      <group>
+        <name>ncsoper</name>
+        <user-name>public</user-name>
+      </group>
+    </groups>
+    <rule-list>
+      <name>admin</name>
+      <group>ncsadmin</group>
+      <rule>
+        <name>any-access</name>
+        <action>permit</action>
+      </rule>
+      <cmdrule xmlns="http://tail-f.com/yang/acm">
+        <name>any-command</name>
+        <action>permit</action>
+      </cmdrule>
+    </rule-list>
+    <rule-list>
+      <name>oper</name>
+      <group>ncsoper</group>
+      <rule>
+        <name>tailf-aaa-user</name>
+        <module-name>tailf-aaa</module-name>
+        <path>/user[name='$USER']</path>
+        <access-operations>create read update delete</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>tailf-webui-user</name>
+        <module-name>tailf-webui</module-name>
+        <path>/webui/data-stores/user-profile[username='$USER']</path>
+        <access-operations>create read update delete</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>tailf-aaa-alluser</name>
+        <module-name>tailf-aaa</module-name>
+        <path>/user</path>
+        <action>deny</action>
+      </rule>
+      <rule>
+        <name>tailf-aaa-aaa</name>
+        <module-name>tailf-aaa</module-name>
+        <path>/aaa</path>
+        <action>deny</action>
+      </rule>
+      <rule>
+        <name>nacm</name>
+        <module-name>ietf-netconf-acm</module-name>
+        <path>/</path>
+        <action>deny</action>
+      </rule>
+      <rule>
+        <name>read-only</name>
+        <path>/</path>
+        <access-operations>read</access-operations>
+        <action>permit</action>
+      </rule>
+      <cmdrule xmlns="http://tail-f.com/yang/acm">
+        <name>c-logout</name>
+        <command>logout</command>
+        <action>deny</action>
+      </cmdrule>
+      <cmdrule xmlns="http://tail-f.com/yang/acm">
+        <name>j-logout</name>
+        <command>request system logout</command>
+        <action>deny</action>
+      </cmdrule>
+      <cmdrule xmlns="http://tail-f.com/yang/acm">
+        <name>any-command</name>
+        <action>permit</action>
+      </cmdrule>
+    </rule-list>
+  </nacm>
+</config>

@@ -1,0 +1,92 @@
+import os
+{% if not unmanaged %}
+import re
+{% endif %}
+import shutil
+{% if dependencies %}
+import site
+{% endif %}
+import subprocess
+import sysconfig
+import tarfile
+from pathlib import Path
+
+from hatchling.builders.hooks.plugin.interface import BuildHookInterface
+
+
+class DockerBuildHook(BuildHookInterface):
+    def initialize(self, version, build_data):
+        """Run Docker build and copy artifacts before packaging"""
+        platform = sysconfig.get_platform().replace("-", "_").replace(".", "_")
+        build_data["tag"] = f"py3-none-{platform}"
+        build_data["pure_python"] = False
+
+        package = Path(__file__).parent
+
+{% if not unmanaged %}
+        package_version = self.build_config.builder.metadata.version
+        nso_pkg_version = re.sub(r"\+nso[^.]+\.[^.]+(\.[^.]+)?", "", package_version)
+        package_meta_data = package / "src" / "package-meta-data.xml"
+        content = package_meta_data.read_text()
+        content = re.sub(
+            r"(<package-version>).*?(</package-version>)",
+            rf"\g<1>{nso_pkg_version}\g<2>",
+            content,
+        )
+        package_meta_data.write_text(content)
+
+{% endif %}
+        nso_ver = os.getenv("NSO_VERSION", "0.0.0")
+        registry = os.getenv("REGISTRY", "registry")
+        target = package / "target"
+        if target.exists():
+            shutil.rmtree(target)
+        target.mkdir()
+
+{% if dependencies %}
+        site_packages = Path(site.getsitepackages()[0])
+        deps_path = package / "deps"
+        if deps_path.is_dir():
+            shutil.rmtree(deps_path)
+        deps_path.mkdir()
+{% for dep in dependencies %}
+        dep_py_path = site_packages / "pyndev-nso" / "{{ dep }}.tar.gz"
+        shutil.copy(dep_py_path, deps_path)
+{% endfor %}
+
+{% endif %}
+        docker_cmd = [
+            "docker",
+            "buildx",
+            "build",
+{% if dependencies %}
+            "--build-context",
+            f"deps={{ '{' }}deps_path{{ '}'}}",
+{% endif %}
+            "--build-arg",
+            f"NSO_VERSION={nso_ver}",
+            "--build-arg",
+            f"REGISTRY={registry}",
+            "-f",
+            "Dockerfile",
+            "--output",
+            f"type=local,dest={target}",
+            ".",
+        ]
+        subprocess.run(docker_cmd, cwd=package, check=True)
+
+{% if dependencies %}
+        if deps_path.is_dir():
+            shutil.rmtree(deps_path)
+
+{% endif %}
+        archive_name = f"{package.name}.tar.gz"
+        archive_path = package / archive_name
+        with tarfile.open(archive_path, "w:gz") as tar:
+            tar.add(target, arcname=package.name, recursive=True)
+
+
+def nso_version(*, tag: str, params: dict) -> str:
+    nso_ver = os.environ.get("NSO_VERSION", "")
+
+    return f"{params['pkg-version']}+nso{nso_ver}"

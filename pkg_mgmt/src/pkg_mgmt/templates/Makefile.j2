@@ -1,0 +1,38 @@
+{% set TAB = '\t' %}
+all: fxs
+.PHONY: all
+
+# Include standard NCS examples build definitions and rules
+include $(NCS_DIR)/src/ncs/build/include.ncs.mk
+
+# Support yang submodules
+SRC = $(filter-out $(shell grep -l '^submodule' yang/*.yang), $(wildcard yang/*.yang))
+DIRS = ../load-dir
+FXS = $(SRC:yang/%.yang=../load-dir/%.fxs)
+
+# Support multiple modules
+YANGPATH += yang
+{% for dep in dependencies %}
+YANGPATH += ../../{{ dep }}/src/yang
+{% endfor %}
+
+NCSCPATH   = $(YANGPATH:%=--yangpath %)
+YANGERPATH = $(YANGPATH:%=--path %)
+
+fxs: $(DIRS) $(FXS)
+
+$(DIRS):
+{{ TAB }}mkdir -p $@
+
+# Support both annotations and deviations in ./yang directory
+../load-dir/%.fxs: yang/%.yang
+{{ TAB }}$(NCSC) \
+        `[ -f yang/$*-ann.yang ] && echo "-a yang/$*-ann.yang"` \
+        `[ -f yang/$*-dev.yang ] && echo "--deviation yang/$*-dev.yang"` \
+        --fail-on-warnings \
+        $(NCSCPATH) \
+        -c -o $@ $<
+
+clean:
+{{ TAB }}rm -rf $(DIRS)
+.PHONY: clean

@@ -1,0 +1,31 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <authgroups>
+      <group>
+        <name>default</name>
+        <default-map>
+          <remote-name>admin</remote-name>
+          <remote-password>$9$JUBKKSTWkPTzmCBJwFk0hOO3BwVq8AEtpzQiWZ4XP74=</remote-password>
+        </default-map>
+      </group>
+    </authgroups>
+    <profiles>
+      <capabilities-profile>
+        <name>test-profile</name>
+      </capabilities-profile>
+    </profiles>
+    <device>
+      <name>test</name>
+      <address>127.0.0.1</address>
+      <authgroup>default</authgroup>
+      <device-type>
+        <netconf>
+          <ned-id xmlns:ned="http://tail-f.com/ns/ncs-ned">ned:netconf</ned-id>
+        </netconf>
+      </device-type>
+      <state>
+        <admin-state>southbound-locked</admin-state>
+      </state>
+    </device>
+  </devices>
+</config>

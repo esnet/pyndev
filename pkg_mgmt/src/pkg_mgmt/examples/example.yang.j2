@@ -1,0 +1,49 @@
+module {{ name }} {
+  yang-version 1.1;
+  namespace "urn:example.com:{{ name }}";
+  prefix {{ name }};
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  organization "Example";
+  contact "Example admin";
+  description
+    "Generated YANG model for {{ name }} service";
+
+  revision {{ date }} {
+    description
+      "Initial revision.";
+    reference "Init";
+  }
+
+  list {{ name }} {
+    description "Example skeleton service";
+
+    key "device";
+
+    leaf device {
+        type leafref {
+            path "/ncs:devices/ncs:device/ncs:name";
+        }
+
+        description
+          "Device Name";
+        tailf:info
+          "Device Name";
+        tailf:cli-allow-range;
+    }
+
+    uses ncs:service-data;
+    ncs:servicepoint {{ name }};
+
+    leaf description {
+      type string;
+    }
+  }
+}

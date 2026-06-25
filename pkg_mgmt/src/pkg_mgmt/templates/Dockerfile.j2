@@ -1,0 +1,33 @@
+ARG NSO_VERSION=latest
+ARG REGISTRY=registry
+
+FROM ${REGISTRY}cisco-nso-build:${NSO_VERSION} AS build
+{% if unmanaged %}
+COPY --chown=998:998 ./src /nso/run/packages/{{ name }}
+{% else %}
+COPY --chown=998:998 ./src/src /nso/run/packages/{{ name }}/src
+{% if dependencies %}
+{% for dep in dependencies %}
+COPY --from=deps {{ dep }}.tar.gz /tmp/
+RUN tar -xzf /tmp/{{ dep }}.tar.gz -C /nso/run/packages && \
+    chown -R 998:998 /nso/run/packages/{{ dep }}
+{% endfor %}
+{% endif %}
+{% endif %}
+RUN make -C /nso/run/packages/{{ name }}/src clean all
+{% if py_requirements %}
+WORKDIR /nso/run/packages/{{ name }}
+RUN pip install --target ./python -r src/requirements.txt
+{% endif %}
+
+{% if unmanaged %}
+FROM scratch
+COPY --from=build /nso/run/packages/{{ name }} /
+{% else %}
+FROM scratch AS update
+COPY ./src /
+
+FROM scratch
+COPY --from=build /nso/run/packages/{{ name }} /
+COPY --from=update / /
+{% endif %}

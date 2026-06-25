@@ -1,0 +1,59 @@
+[project]
+name = "pyndev"
+dynamic = ["version"]
+description = "Python wrapped NSO development environment"
+readme = "README.md"
+authors = [
+    { name = "Bill Stephens", email = "bill@es.net" }
+]
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[dependency-groups]
+dev = [
+    "pkg_mgmt",
+    "ruff>=0.14.13",
+    "pyang>=2.7.1",
+    "mdformat>=1.0.0",
+    "mdformat-gfm>=1.0.0",
+]
+pyndev-nso = [
+]
+
+[[tool.uv.index]]
+name = "private"
+url = "http://interal-pypi"
+publish-url = "http://internal-pypi"
+explicit = true
+
+[tool.uv.sources]
+pkg_mgmt = {workspace = true}
+
+[tool.uv.workspace]
+members = [
+    "pkg_mgmt",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".venv",
+    "venv",
+    "docs",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "I",     # isort
+    "W",     # pycodestyle warnings
+]
+ignore = [
+    "E501",  # Line too long - too many single strings and comment lines
+]

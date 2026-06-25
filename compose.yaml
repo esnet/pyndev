@@ -1,0 +1,68 @@
+name: pyndev-nso
+
+secrets:
+  uv_index_username:
+    environment: UV_INDEX_PRIVATE_USERNAME
+  uv_index_password:
+    environment: UV_INDEX_PRIVATE_PASSWORD
+
+volumes:
+  logs:
+
+services:
+  # Run NSO with watch for interactive development and troubleshooting
+  nso:
+    build:
+      context: ./nso/init
+      additional_contexts:
+        packages: .venv/lib/python3.12/site-packages/pyndev-nso
+      args:
+        REGISTRY: ${REGISTRY}
+        NSO_VERSION: ${NSO_VERSION}
+    profiles:
+      - nso
+    volumes:
+      - logs:/log
+    ports:
+      - ${NSO_HTTP_PORT:-8080}:80
+    develop:
+      watch:
+        - action: sync+exec
+          path: ./.venv/lib/python3.12/site-packages/pyndev-nso
+          target: /nso/run/packages
+          exec:
+            command: chown -R 998:998 /nso/run/packages
+            user: root
+
+  # Run NSO with no watching and a health check, CI testing instance
+  auto-nso:
+    build:
+      context: ./nso/init
+      additional_contexts:
+        packages: .venv/lib/python3.12/site-packages/pyndev-nso
+      args:
+        REGISTRY: ${REGISTRY}
+        NSO_VERSION: ${NSO_VERSION}
+    profiles:
+      - auto-nso
+    healthcheck:
+      test: ncs_cmd -c "wait-start 2"
+      start_period: 60s
+      interval: 5s
+      timeout: 5s
+      retries: 2500
+
+#  Example will need update based on your environment
+#  test:
+#    build:
+#      context: ./nso/test
+#      additional_contexts:
+#        common: ./packages/esnet-common/src/python
+#      secrets:
+#        - uv_index_username
+#        - uv_index_password
+#    profiles:
+#      - test
+#    user: "${TEST_UID:-0}:${TEST_GID:-0}"
+#    volumes:
+#      - ./nso/test:/nso/test

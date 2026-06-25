@@ -1,0 +1,24 @@
+[project]
+name = "pkg_mgmt"
+version = "0.2.0"
+description = "pyndev package management helpers"
+authors = [
+    { name = "Bill Stephens", email = "bill@es.net" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2==3.1.6",
+    "requests==2.34.2",
+    "tomlkit==0.15.0",
+]
+
+[project.scripts]
+add_pkg = "pkg_mgmt.add_pkg:main"
+publish_pkg = "pkg_mgmt.publish_pkg:main"
+release = "pkg_mgmt.release:main"
+rm_pkg = "pkg_mgmt.rm_pkg:main"
+sync_pkg = "pkg_mgmt.sync_pkg:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

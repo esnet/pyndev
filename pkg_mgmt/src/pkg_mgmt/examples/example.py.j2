@@ -1,0 +1,49 @@
+import ncs
+from ncs.application import Service
+{% if template %}
+from ncs.template import Template
+{% endif %}
+
+
+class {{ class_name }}Service(Service):
+    """
+    NCS Service callback handler for {{ name }} service
+    """
+
+    @Service.create
+    def cb_create(self, tctx, root, service, proplist):
+        """
+        Service create callback
+        """
+        device = service._parent._parent._parent['device']
+
+{% if template %}
+        vars = ncs.template.Variables()
+        vars.add('DESCRIPTION', service.description)
+        template = ncs.template.Template(service)
+        template.apply('{{ package }}-template', vars)
+{% endif %}
+
+        self.log.debug(
+            '{{ package }} update applied '
+            f'for: {% raw %}{device}{% endraw %}'
+        )
+
+
+class {{ application }}(ncs.application.Application):
+    """
+    NCS Application class for {{ name }}
+    """
+
+    def setup(self):
+        """
+        Register service callbacks
+        """
+        self.log.info('{{ name }} RUNNING')
+        self.register_service('{{ package }}', {{ class_name }}Service)
+
+    def teardown(self):
+        """
+        Cleanup
+        """
+        self.log.info('{{ name }} FINISHED')
