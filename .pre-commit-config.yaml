@@ -1,0 +1,48 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_stages: [pre-push]
+
+exclude: |
+  (?x)^(
+    packages/.*
+  )$
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ['--allow-multiple-documents']
+
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: uv run --no-sync ruff check --fix --exit-non-zero-on-fix
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: ruff-format
+        entry: uv run --no-sync ruff format
+        language: system
+        types: [python]
+
+      - id: mdformat
+        name: mdformat
+        entry: uv run --no-sync mdformat
+        language: system
+        types: [markdown]
+
+      - id: pyang-lint
+        name: pyang-lint
+        entry: >
+          bash -eo pipefail -c '
+            files=$(find packages -name "*.yang" -not -path "nso/ncs_yang")
+            [ -z "$files" ] && exit 0
+            uv run --no-sync pyang -p nso/ncs_yang -p packages --lint -W error $files
+          '
+        language: system
+        pass_filenames: false
