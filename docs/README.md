@@ -4,13 +4,13 @@ Full reference documentation for pyndev internal tooling
 
 ## Table of Contents
 
-- [Environment](##environment)
+- [Environment](#environment)
   - [Just Recipes](./just-recipes.md)
   - [Gitlab Setup](./gitlab-configuration.md)
-- [Packages](##packages)
+- [Packages](#packages)
   - [Package Configuration](./package-configuration.md)
   - [Package Management](./package-management.md)
-- [Appendix](##appendix)
+- [Appendix](#appendix)
   - [Multi Arch Docker Images](./container-registry-setup.md)
 
 ## Overview
