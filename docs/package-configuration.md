@@ -21,9 +21,9 @@ bfd                               1.82.0+nso6.6.3.0
 bgp-neighbor                      1.85.0+nso6.6.3.0
 ```
 
-Next we have the package version itself which pyndev synchornizes the python
+Next we have the package version itself which pyndev synchronizes the python
 version with the NSO version presented in the cli. Existing python versioning
-tools bring in some additonal enhancements to a local developer environment.
+tools bring in some additional enhancements to a local developer environment.
 
 ```
 arista-dcs-cli-5-30               5.30.7+nso6.6.3
@@ -88,13 +88,13 @@ file = "_version.py"
 
 The package is configured for a "dynamic" version and then relies on the python
 build system and helper `versioningit` to track and setup the actual version.
-There are a couple of edge case issuse when the git repo has just been
+There are a couple of edge case issues when the git repo has just been
 initialized or a package is brand new and not in git tracking. The
 default-version and default-tag configurations handle these edge cases but are
 largely unused in normal development with long running packages. We use git as
 the source for local repo state but since this environment acts like a mono
 repo with independent package versions from the project version then we must
-manually set and and managed the `base_version` with the pkg-version parameter.
+manually set and managed the `base_version` with the pkg-version parameter.
 The actual version format can be modified and updated per specific environments
 requirements.
 
@@ -154,7 +154,7 @@ requires = [
 ```
 
 This follows the standard python patterns for build dependencies. For the NSO
-package case this declaration kicks a bit more logic in the the pkg-sync
+package case this declaration kicks a bit more logic in the pkg-sync
 script. Package specific Dockerfiles are updated to include dependency source
 yang and the package Makefile is dynamically generated to include these in the
 yang path. These actions satisfy the idea of a NSO build time dependency for
@@ -190,7 +190,7 @@ workspace and thus are truly just runtime artifacts.
 ## Python Components
 
 If it hasn't been made clear the package-meta-data.xml is being dynamically
-generated in it's entirety. This means we will typically also declare our NSO
+generated in its entirety. This means we will typically also declare our NSO
 package python components in the pyproject.toml.
 
 ```

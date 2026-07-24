@@ -5,13 +5,13 @@
 The pyndev environment comes with a local `pkg_mgmt` python module that serves
 the purpose of bridging the gap between a pure python and NSO package. It also
 provides helper functions to improve the ergonomics of managing multiple
-pyproject.toml files and name references. `pkg_mgmt` exposes it's entry points
+pyproject.toml files and name references. `pkg_mgmt` exposes its entry points
 as a series of scripts that can be referenced with `uv run`. Most if not all of
 the scripts expect pyndev environment variables it is then expected that the
 python scripts are wrapped in `just` commands to provide the necessary context.
 
 > In most cases `pkg_mgmt` is perfoming updates that are required before `uv`
-> can run it's normal management prcoesses. It is typical to see these commands
+> can run its normal management processes. It is typical to see these commands
 > run with the flag `uv run --no-sync` to prevent `uv` from trying to update
 > the internal python state before the pyndev state update.
 
@@ -52,7 +52,7 @@ options:
   -d NAME, --dependency NAME
                         Specify a package that is a both a build and runtime dependency to the new package, can be declared multiple times for additional dependencies
   --description DESCRIPTION
-                        Specify a package desription to be used in package meta data
+                        Specify a package description to be used in package meta data
   -e, --empty           Skips example files for a new package
   -p, --python          Create Python service skeleton
   --python-requirements
@@ -67,12 +67,12 @@ options:
 
 This function is a macro to update the existing project pyproject.toml with a
 new dependency while creating a skeleton for the actual package in
-`./packages`. Many of the arguments are intented to pre-populate the
+`./packages`. Many of the arguments are intended to pre-populate the
 pyproject.toml configuration with seed data. This command can create demo files
 much like the NSO internal `ncs-make-package` but with simpler options. The
 seed files are jinja templates located at `pkg_mgmt/src/pkg_mgmt/examples/` and
 the intention is your project customizes these files for custom needs versus
-adding even more complex arguments to the funtion.
+adding even more complex arguments to the function.
 
 ### Migrating an existing package to pyndev example
 
@@ -162,15 +162,15 @@ up the top level pyproject.toml references.
 ## sync-pkg
 
 This function is the foundation for dynamic file management in the pyndev
-environment. The first step is scan pyproject.toml dependecies and synchronize
+environment. The first step is scan pyproject.toml dependencies and synchronize
 the `NSO_VERSION` value with the configurations. This allows the simple
 variable to be the main driver for the project as a whole. The next step reads
-the packages pyproject.toml configuration and udpates the python package
+the packages pyproject.toml configuration and updates the python package
 `build_hook.py` and `Dockerfile` files. This allows a developer to update the
 configuration such as dependencies and have those propagated at build time.
 Finally, if a package is `unmanaged = False` the script will regenerate the NSO
 package files `package-meta-data.xml` and `src/Makefile`. These package updates
-are considered preqrequisites to `uv sync` so that files are up to date prior
+are considered prerequisites to `uv sync` so that files are up to date prior
 to any python builds.
 
 ### just build
