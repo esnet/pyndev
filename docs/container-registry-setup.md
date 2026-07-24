@@ -1,6 +1,6 @@
 \[[Contents](./README.md)\]
 
-# Multi arch ontainer registry setup for NSO dev
+# Multi arch container registry setup for NSO dev
 
 This document outlines the process used to setup a private
 container registry for NSO development purposes.
@@ -10,7 +10,7 @@ container registry for NSO development purposes.
 ### Receive NSO container images from Cisco rep
 
 For the development environment we need both a `build` and `prod` image for all
-NSO version expecting to be worked on. NSO container images are compile and
+NSO versions expected to be worked on. NSO container images are compiled and
 built for specific CPU architectures, if you want to develop on both x86 and
 Apple silicon (arm64) be sure to acquire both versions for each type of
 container, 4 total images for a single version of NSO.
@@ -28,7 +28,7 @@ ls
 -rw-r--r--@ 1 wbstephens  staff   668M Jul 26 14:33 nso-6.6.1.container-image-prod.linux.x86_64.signed.bin
 ```
 
-Cisco create's these with a convenient self extracting script:
+Cisco creates these with a convenient self extracting script:
 
 ```
 sh nso-6.6.1.container-image-build.linux.arm64.signed.bin
@@ -48,8 +48,8 @@ packages, do this 3 more times or for the remaining images.
 #### Multi arch images in Docker
 
 You should now have 4 `.tar.gz` files that can be loaded directly into local
-Docker. We need hand these files on a per architecture basis due to Cisco using
-overlapping generic names in there image files.
+Docker. We need to hand these files on a per architecture basis due to Cisco using
+overlapping generic names in their image files.
 
 ```
 docker image load -i nso-6.6.1.container-image-build.linux.arm64.tar.gz
@@ -120,8 +120,8 @@ docker image push container-registry.example.com/nso/cisco/cisco-nso-prod:6.6.1-
 
 #### Multi arch images on remote registry
 
-Next we create docker manifest which is magic that allows us to go back to a
-generic image name that the local docker client can then select it's own proper
+Next we create a docker manifest, which is the magic that allows us to go back to a
+generic image name that the local docker client can then select its own proper
 arch as needed.
 
 \*\*Notes:
@@ -146,7 +146,7 @@ Created manifest list container-registry.example.com/nso/cisco/cisco-nso-build:6
 Created manifest list container-registry.example.com/nso/cisco/cisco-nso-prod:6.6.1
 ```
 
-Finally we can push the manifest to gitlab registry for availablility:
+Finally we can push the manifest to gitlab registry for availability:
 
 ```
 docker manifest push container-registry.example.com/nso/cisco/cisco-nso-build:6.6.1

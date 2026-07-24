@@ -37,15 +37,15 @@ Python wrapped NSO development environment
 
   This project utilizes the concept of a python wheel as a means of
   distributing and managing NSO packages and respective code. This model is
-  facilitated by the use of of `uv` as the project manager. uv provides first
-  class support for workspaces, managing and running tooling, and effecient
+  facilitated by the use of `uv` as the project manager. uv provides first
+  class support for workspaces, managing and running tooling, and efficient 
   caching and speed. This provides extended support for NSO package service
-  logic written exlusively with python components. uv documentation and
+  logic written exclusively with python components. uv documentation and
   installation instructions can be found [here][uv].
 
 - Install "just" command line runner in your environment.
 
-  just documentation and installation instruction can be found
+  just documentation and installation instructions can be found
   [here][just]. Day to day work in this environment should consist of fairly
   straightforward commands and tools but often we need to chain many commands
   together or pass lots of special options as flags. `just` is a tool that
@@ -80,14 +80,14 @@ Python wrapped NSO development environment
 - `just init`
 
   This command installs project dev dependencies and other setup. This
-  re-initializes the project with a clean .venv and should be ran whenever
+  re-initializes the project with a clean .venv and should be run whenever
   the `NSO_VERSION` environment variable is updated.
 
 - `just sync`
 
   This command will update and build all locally defined packages and pull
-  in any remote packages. At this point the .venv should be populated with
-  with all declared NSO packages and needs to be ran at least once before
+  in any remote packages. At this point the .venv should be populated with 
+  all declared NSO packages and needs to be run at least once before
   NSO will run locally.
 
 - `just up`
@@ -101,7 +101,7 @@ Python wrapped NSO development environment
   > Watch does require running the NSO process in the foreground and it is up
   > to the developer to monitor when the container is fully up and healthy.
 
-  A few interfactive commands:
+  A few interactive commands:
 
   - `just redeploy`
 
@@ -119,12 +119,12 @@ Python wrapped NSO development environment
     modifications and then issues a `request packages reload force` command.
     NSO does not support reloading individual packages so this is a global
     command with no package arguments. Reload is useful for applying updates
-    to yang files or other changes that require NSO system udgrades.
+    to yang files or other changes that require NSO system upgrades.
 
   - `just test`
 
     If your test system supports API based integration tests, these can now
-    be ran against the local instance of NSO.
+    be run against the local instance of NSO.
 
 - `Ctrl-C` and `just down`
 
@@ -169,7 +169,7 @@ pythonic declarations.
   - pkg_mgmt
 
     pkg_mgmt is a local python package that contains specialized tooling to
-    handle the pecularities of a NSO package wrapped in a python wheel. Details
+    handle the peculiarities of an NSO package wrapped in a python wheel. Details
     will be pointed out throughout the documentation but these tools need to be
     installed at the init stage and remain available for all additional
     project operations.
@@ -193,8 +193,8 @@ pythonic declarations.
 
   > This project uses environment variables to store authentication secrets for
   > private pypi access. An example file `./.env.local.example` should be
-  > updated with a developers personal secrets and saved as `./.env.local`.
-  > The just command runner will load this into it's context for all uv
+  > updated with a developer's personal secrets and saved as `./.env.local`.
+  > The just command runner will load this into its context for all uv
   > commands and no other overhead such as sourcing or variable management is
   > required. The non-example filename is in `./.gitignore` to reduce the
   > chance for secret publishing.
@@ -225,7 +225,7 @@ pythonic declarations.
   ]
   ```
 
-  Local workspace NSO packages are added the top level pyproject.toml
+  Local workspace NSO packages are added to the top level pyproject.toml
   dependencies array in addition to the uv workspace configuration. uv controls
   where the workspace looks for the source of any specific package with sources
   configuration. In this example, pkg\_mgmt is local pure python package listed
@@ -285,7 +285,7 @@ pythonic declarations.
 
 ### Packages
 
-NSO packages are a combination both python and NSO components
+NSO packages are a combination of both python and NSO components
 
 Directory tree
 
@@ -313,16 +313,16 @@ packages
     └── target
 ```
 
-The traditional NSO package with it's own meta data and structure are placed
+The traditional NSO package with its own meta data and structure are placed
 into the top level package src.
 
-The configuration for a package is represent by the following files.
+The configuration for a package is represented by the following files.
 
 ```
 pyproject.toml
 ```
 
-The following files are build artifacts that typically ignored from version
+The following files are build artifacts that are typically ignored from version
 control.
 
 ```

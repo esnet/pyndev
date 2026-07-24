@@ -137,11 +137,11 @@ Issue a ncs_cli 'request packages package [package] redeploy' (no package sync)
 
 This hyphenated command `re-deploy` represents the actual NSO
 `request packages package [package] redeploy`. With this version no other
-side-effects such as packaging syncing or updates are ran. This command is more
-for troubleshooting and separating concerns. The expected user ran command is
+side-effects such as packaging syncing or updates are run. This command is more
+for troubleshooting and separating concerns. The expected user run command is
 the non-hyphenated `redeploy`. The argument `target` will accept `all` or one
 specific package name. The NSO redeploy command is a serial operation so
-specifying the package under test will be more effecient. NSO redeploys restart
+specifying the package under test will be more efficient. NSO redeploys restart
 the package specific python process and reloads the package templates. These
 updates are quick and simple for NSO to complete.
 
@@ -159,11 +159,11 @@ Sync packages and redeploy NSO packages
 - service='nso'
 
 This redeploy command includes a `just sync` to ensure all package files are
-up to date and synchronized prior to issueing the redeploy. This is standard
+up to date and synchronized prior to issuing the redeploy. This is standard
 command for developers doing hot redeploys on their local instance of NSO. The
 argument `target` will accept `all` or one specific package name. The NSO
 redeploy command is a serial operation so specifying the package under test
-will be more effecient. NSO redeploys restart the package specific python
+will be more efficient. NSO redeploys restart the package specific python
 process and reloads the package templates. These updates are quick and simple
 for NSO to complete.
 
@@ -180,8 +180,8 @@ Sync packages and reload all NSO packages
 - service='nso'
 
 This command includes a 'just sync' to ensure all package files are up to date
-and synchronized prioer to issueing a `request packages reload force`. Package
-reloading is required for updates to the yang models or changes taht would
+and synchronized prior to issuing a `request packages reload force`. Package
+reloading is required for updates to the yang models or changes that would
 otherwise trigger an upgrade in NSO. This operation can take some time
 depending on the changes and the amount of other NSO packages loaded.
 
@@ -229,7 +229,7 @@ reinstall with the `uv sync` to pick up all updated files.
 ## sync-pkg
 
 pyndev sync managed package files, updates dynamically generated files based on
-individual package pyproject.toml configurations. Typically ran under the
+individual package pyproject.toml configurations. Typically run under the
 `just sync` umbrella and not often called in isolation.
 
 ## test
@@ -246,7 +246,7 @@ Bring up a local instance of NSO
 - service='nso'
 
 Defaults with the compose `--watch` feature to enable package update
-sychronization and "hot" updating the local NSO instance.
+synchronization and "hot" updating the local NSO instance.
 
 > With the defaults the service parameter can be ignored but if your compose is
 > modified to support multiple local instances of NSO, a virtual lab instance
