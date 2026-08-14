@@ -1,16 +1,17 @@
 ARG NSO_VERSION=latest
+ARG PKG_VERSION=0.0.0
 ARG REGISTRY=registry
 
 FROM ${REGISTRY}cisco-nso-build:${NSO_VERSION} AS build
 {% if unmanaged %}
-COPY --chown=998:998 ./src /nso/run/packages/{{ name }}
+COPY --chown=nso ./src /nso/run/packages/{{ name }}
 {% else %}
-COPY --chown=998:998 ./src/src /nso/run/packages/{{ name }}/src
+COPY --chown=nso ./src/src /nso/run/packages/{{ name }}/src
 {% if dependencies %}
 {% for dep in dependencies %}
 COPY --from=deps {{ dep }}.tar.gz /tmp/
 RUN tar -xzf /tmp/{{ dep }}.tar.gz -C /nso/run/packages && \
-    chown -R 998:998 /nso/run/packages/{{ dep }}
+    chown -R nso /nso/run/packages/{{ dep }}
 {% endfor %}
 {% endif %}
 {% endif %}
@@ -22,12 +23,18 @@ RUN pip install --target ./python -r src/requirements.txt
 
 {% if unmanaged %}
 FROM scratch
-COPY --from=build /nso/run/packages/{{ name }} /
+COPY --from=build /nso/run/packages/{{ name }} /{{ name }}
 {% else %}
-FROM scratch AS update
-COPY ./src /
+FROM ${REGISTRY}cisco-nso-build:${NSO_VERSION} AS update
+COPY --chown=nso ./src /{{ name }}
+
+FROM ${REGISTRY}cisco-nso-build:${NSO_VERSION} AS version
+ARG PKG_VERSION
+COPY --from=update /{{ name }}/package-meta-data.xml /tmp/package-meta-data.xml
+RUN sed -i -E "s|(<package-version>)[^<]*(</package-version>)|\1${PKG_VERSION}\2|" /tmp/package-meta-data.xml
 
 FROM scratch
-COPY --from=build /nso/run/packages/{{ name }} /
-COPY --from=update / /
+COPY --from=build /nso/run/packages/{{ name }} /{{ name }}
+COPY --from=update /{{ name }} /{{ name }}
+COPY --from=version /tmp/package-meta-data.xml /{{ name }}/package-meta-data.xml
 {% endif %}

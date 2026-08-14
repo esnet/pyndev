@@ -1,5 +1,4 @@
 import os
-import re
 import subprocess
 import sys
 from datetime import date
@@ -11,6 +10,7 @@ from .cli import error
 from .toml import (
     get_pkg_build_dependencies,
     get_pkg_dependencies,
+    get_pkg_version,
     get_pyndev_description,
     get_pyndev_python_components,
     get_pyndev_requirements,
@@ -74,12 +74,7 @@ def sync_package_meta_data(pkg_name: str, dependencies: list[str] = []) -> None:
     nso_path = pkg_path / "src"
     pkg_meta_data = nso_path / "package-meta-data.xml"
     ncs_version = os.environ.get("NSO_VERSION", "0.0.0")
-    pkg_namespace = {}
-    version_file = pkg_path / "_version.py"
-    if version_file.exists():
-        exec(version_file.read_text(), pkg_namespace)
-    pkg_version = pkg_namespace.get("__version__", "0.0.0")
-    pkg_version = re.sub(r"\+nso[^.]+\.[^.]+(\.[^.]+)?", "", pkg_version)
+    pkg_version = get_pkg_version(pkg_name)
     meta_data = {
         "name": pkg_name,
         "description": get_pyndev_description(pkg_name),

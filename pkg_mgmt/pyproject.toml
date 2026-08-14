@@ -1,6 +1,6 @@
 [project]
 name = "pkg_mgmt"
-version = "0.2.0"
+version = "0.3.0"
 description = "pyndev package management helpers"
 authors = [
     { name = "Bill Stephens", email = "bill@es.net" }

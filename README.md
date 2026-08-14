@@ -292,25 +292,22 @@ Directory tree
 ```
 packages
 ├── interface
-│   ├── _version.py
 │   ├── interface.tar.gz
 │   ├── build_hook.py
 │   ├── CHANGELOG.md
 │   ├── Dockerfile
 │   ├── pyproject.toml
 │   ├── src
-│   ├── README.md
-│   └── target
+│   └── README.md
 └── bfd
-    ├── _version.py
     ├── bfd.tar.gz
     ├── build_hook.py
     ├── CHANGELOG.md
     ├── Dockerfile
     ├── pyproject.toml
     ├── src
-    ├── README.md
-    └── target
+    └── README.md
+
 ```
 
 The traditional NSO package with its own meta data and structure are placed
@@ -322,13 +319,11 @@ The configuration for a package is represented by the following files.
 pyproject.toml
 ```
 
-The following files are build artifacts that are typically ignored from version
-control.
+The package build generates the NSO package .tar.gz as a build artifact that is
+typically ignored by version control.
 
 ```
-_version.py
 [package].tar.gz
-target/
 ```
 
 - pkg_mgmt.sync_pkg
