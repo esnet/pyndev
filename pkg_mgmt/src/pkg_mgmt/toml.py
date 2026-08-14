@@ -133,12 +133,9 @@ def create_pyproject(
     format["distance"] = "{base_version}.{rev}"
     format["dirty"] = "{base_version}.{rev}.dirty"
     format["distance-dirty"] = "{base_version}.{rev}.dirty"
-    write = tomlkit.table()
-    write["file"] = "_version.py"
     versioningit["vcs"] = vcs
     versioningit["tag2version"] = tag2version
     versioningit["format"] = format
-    versioningit["write"] = write
     tool["versioningit"] = versioningit
 
     pyndev = tomlkit.table()
@@ -255,6 +252,14 @@ def get_nso_dependencies() -> str:
     pyndev_nso = [dep.split("==")[0] for dep in config.get("dependency-groups", {}).get("pyndev-nso", [])]
 
     return deps + pyndev_nso
+
+
+def get_pkg_version(pkg_name: str) -> str:
+    """Pull out tool.versioningit.tag2version.pkg-version"""
+    config = load_pyproject(pkg_name)
+    pkg_version = config.get("tool", {}).get("versioningit", {}).get("tag2version", {}).get("pkg-version", "")
+
+    return pkg_version
 
 
 def get_pkg_dependencies(pkg_name: str) -> str:
