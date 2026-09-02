@@ -42,7 +42,7 @@ workflow:
 .nso-version-matrix:
   parallel:
     matrix:
-      - NSO_VERSION: ["6.5.7", "6.6.3"]
+      - NSO_VERSION: ["6.6.3", "6.7.3"]
 
 .skip-on-release-updates:
   rules:

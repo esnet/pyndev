@@ -153,7 +153,6 @@ pythonic declarations.
   ```
   [dependency-groups]
   dev = [
-      "ncs_py3",
       "pkg_mgmt",
       "ruff>=0.14.13",
       "pyang>=2.7.1",
@@ -246,15 +245,40 @@ pythonic declarations.
 
   ```
   [dependency-groups]
-  pyndev-nso = [
+  "pyndev-nso-6.6.3" = [
       "arista-dcs-cli-5.30==5.30.7+nso6.6.3",
   ]
   ```
 
-  The pyndev-nso dependency group is a special placeholder for pyndev NSO
-  packages that are external to the current workspace. This separate group is
-  needed for the pyndev specific synchronization process and this array is
-  manually populated.
+  The `pyndev-nso-${NSO_VERSION}` dependency group is a special placeholder for
+  pyndev NSO packages that are external to the current workspace. This
+  separate group is needed for the pyndev specific synchronization process and
+  this array is manually populated.
+  
+  The pyndev-nso dependency group name is version specific to support multiple
+  NSO versions in single `uv.lock` file. When more than one version of NSO is
+  declared there must exist a uv "conflicts" configuration to keep only a
+  single group installed in the local environment at time.
+  
+  pyproject.toml
+  
+  ```
+  [dependency-groups]
+  "pyndev-nso-6.6.3" = [
+      "arista-dcs-cli-5.30==5.30.7+nso6.6.3",
+  ]
+  "pyndev-nso-6.7.3" = [
+      "arista-dcs-cli-5.30==5.30.7+nso6.7.3",
+  ]
+  
+  [tool.uv]
+  conflicts = [
+      [
+          { group = "pyndev-nso-6.6.3" },
+          { group = "pyndev-nso-6.7.3" },
+      ],
+  ]
+  ```
 
 - NSO_VERSION
 
@@ -262,22 +286,20 @@ pythonic declarations.
   PEP 440 "local version identifiers". During build all NSO packages are
   appended with the version that was used for the package build. Internally
   this is all driven by the top level `.env` variable `NSO_VERSION`. If your
-  repository only supports one version of NSO this identifier can be ignored
-  and left off of dependency version matching. If you are concurrently
+  repository only supports one version of NSO this package identifier can be
+  ignored and left off of dependency version matching. If you are concurrently
   developing towards multiple NSO releases the full identifier should be
-  specified in the version.
+  specified in the package version.
 
-  > As previously mentioned, the pkg\_mgmt tooling does some special handling
-  > for the NSO project. One of the tricks that impacts the top level
-  > pyproject.toml is that during a `just sync` the `NSO_VERSION` variable is
-  > read and any NSO versions are updated to be synchronized with the declared
-  > project version. Eg. the arista NED above has a local version tag specific
-  > to set NSO version and a sync function will update that package version
-  > automatically to ensure consistency.
+  > The `NSO_VERSION` variable is referenced in all docker commands to select
+  > a tag for the build and prod versions of the Cisco official containers. 
+  > Additionally, the `just sync` is pinned to interact with dependency-group
+  > of the form `pyndev-nso-${NSO_VERSION}` so both of these configuration
+  > items are required.
 
   > Anytime the NSO_VERSION is updated locally the project needs to be
-  > re-initialized with a `just init` and a `just sync` to setup to the proper
-  > context.
+  > re-initialized with a `just init` and a `just sync` to install to the
+  > proper context.
 
   This feature can be utilized in CI platforms with tools such as Github's
   strategy matrix and Gitlabs parallel matrix. This skeleton has a
