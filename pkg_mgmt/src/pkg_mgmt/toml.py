@@ -228,15 +228,15 @@ def get_pyndev_description(pkg_name: str) -> str:
     return description
 
 
-def get_nso_dependencies() -> str:
+def get_nso_dependencies() -> list[str]:
     """Pull out project NSO package dependencies"""
     config = load_pyproject()
     deps = [dep.split("==")[0] for dep in config.get("project", {}).get("dependencies", [])]
     pyndev_nso = [
         dep.split("==")[0]
-        for group, deps in config.get("dependency-groups", {}).items()
+        for group, group_deps in config.get("dependency-groups", {}).items()
         if "pyndev-nso" in group
-        for dep in deps
+        for dep in group_deps
     ]
 
     return deps + pyndev_nso
@@ -250,21 +250,21 @@ def get_pkg_version(pkg_name: str) -> str:
     return pkg_version
 
 
-def get_pkg_dependencies(pkg_name: str) -> str:
+def get_pkg_dependencies(pkg_name: str) -> list[str]:
     """Pull out package project.dependencies"""
     config = load_pyproject(pkg_name)
     pyndev_nso = [
         dep.split("==")[0]
-        for group, deps in config.get("dependency-groups", {}).items()
+        for group, group_deps in config.get("dependency-groups", {}).items()
         if "pyndev-nso" in group
-        for dep in deps
+        for dep in group_deps
     ]
     nso_deps = get_nso_dependencies()
 
     return [dep for dep in pyndev_nso if dep in nso_deps]
 
 
-def get_pkg_build_dependencies(pkg_name: str) -> str:
+def get_pkg_build_dependencies(pkg_name: str) -> list[str]:
     """Pull out package build-system.requires"""
     config = load_pyproject(pkg_name)
     deps = [dep.split("==")[0] for dep in config.get("build-system", {}).get("requires", [])]
