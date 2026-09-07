@@ -46,7 +46,7 @@ sync quiet='':
   fi
   just sync-pkg
   uv sync --reinstall {{ if quiet != '' { '--quiet' } else { '' } }}
-  uv sync --group pyndev-nso {{ if quiet != '' { '--quiet' } else { '' } }}
+  uv sync --group "pyndev-nso-${NSO_VERSION}" {{ if quiet != '' { '--quiet' } else { '' } }}
 
 # Build local packages, default is '--all-packages', optionally specify one or more package names to build serially
 build *args:

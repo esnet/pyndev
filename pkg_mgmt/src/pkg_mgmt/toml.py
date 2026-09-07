@@ -173,23 +173,6 @@ def update_nso_version(nso_version: str, deps: list[str]) -> None:
         deps[i] = re.sub(r"\+nso[^.]+\.[^.]+(\.[^.]+)?", f"+nso{nso_version}", dep)
 
 
-def sync_pyproject(nso_version: str, pkg_name: str | None = None) -> None:
-    """Synchronize pyproject.toml with .env state"""
-    config = load_pyproject(pkg_name)
-
-    if "build-system" in config and "requires" in config["build-system"]:
-        update_nso_version(nso_version, config["build-system"]["requires"])
-
-    if "project" in config and "dependencies" in config["project"]:
-        update_nso_version(nso_version, config["project"]["dependencies"])
-
-    if "dependency-groups" in config:
-        for group_deps in config["dependency-groups"].values():
-            update_nso_version(nso_version, group_deps)
-
-    write_pyproject(config, pkg_name)
-
-
 def update_pyproject(pkg_name: str, version: str) -> None:
     """Update pyndev pyproject.toml with pkg_name"""
     config = load_pyproject()
@@ -245,11 +228,16 @@ def get_pyndev_description(pkg_name: str) -> str:
     return description
 
 
-def get_nso_dependencies() -> str:
+def get_nso_dependencies() -> list[str]:
     """Pull out project NSO package dependencies"""
     config = load_pyproject()
     deps = [dep.split("==")[0] for dep in config.get("project", {}).get("dependencies", [])]
-    pyndev_nso = [dep.split("==")[0] for dep in config.get("dependency-groups", {}).get("pyndev-nso", [])]
+    pyndev_nso = [
+        dep.split("==")[0]
+        for group, group_deps in config.get("dependency-groups", {}).items()
+        if "pyndev-nso" in group
+        for dep in group_deps
+    ]
 
     return deps + pyndev_nso
 
@@ -262,16 +250,21 @@ def get_pkg_version(pkg_name: str) -> str:
     return pkg_version
 
 
-def get_pkg_dependencies(pkg_name: str) -> str:
+def get_pkg_dependencies(pkg_name: str) -> list[str]:
     """Pull out package project.dependencies"""
     config = load_pyproject(pkg_name)
-    pyndev_nso = [dep.split("==")[0] for dep in config.get("dependency-groups", {}).get("pyndev-nso", [])]
+    pyndev_nso = [
+        dep.split("==")[0]
+        for group, group_deps in config.get("dependency-groups", {}).items()
+        if "pyndev-nso" in group
+        for dep in group_deps
+    ]
     nso_deps = get_nso_dependencies()
 
     return [dep for dep in pyndev_nso if dep in nso_deps]
 
 
-def get_pkg_build_dependencies(pkg_name: str) -> str:
+def get_pkg_build_dependencies(pkg_name: str) -> list[str]:
     """Pull out package build-system.requires"""
     config = load_pyproject(pkg_name)
     deps = [dep.split("==")[0] for dep in config.get("build-system", {}).get("requires", [])]

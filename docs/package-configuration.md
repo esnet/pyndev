@@ -133,11 +133,13 @@ package's own `src/` directory.
 
 ## Dependencies
 
-Pyndev package pyproject.toml supports two kinds of dependencies. In either
-case since uv is managing the project as workspace NSO packages can be
-declared much more simply and uv will find the source based on the top level
-pyproject.toml configuration for sources and inherit private repository
-settings.
+Pyndev package pyproject.toml supports two kinds of dependencies. For locking
+and consistency per package NSO dependencies should also be declared in the
+project top level pyproject.toml. When a top level pyproject.toml defines
+versions including the nso version identifiers with or with out conflict groups
+the child package pyproject.toml will inherit the state of the workspace. Thus,
+it is redundant and not needed to set NSO versions for packages or the special
+`pyndev-nso` dependency group name.
 
 ### Build Dependencies
 

@@ -1,6 +1,6 @@
 [project]
 name = "pyndev"
-dynamic = ["version"]
+version = "0.4.0"
 description = "Python wrapped NSO development environment"
 readme = "README.md"
 authors = [
@@ -18,7 +18,11 @@ dev = [
     "mdformat>=1.0.0",
     "mdformat-gfm>=1.0.0",
 ]
-pyndev-nso = [
+"pyndev-nso-6.6.3" = [
+]
+
+[tool.uv]
+conflicts = [
 ]
 
 [[tool.uv.index]]
