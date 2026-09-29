@@ -4,6 +4,7 @@ Full reference documentation for pyndev internal tooling
 
 ## Table of Contents
 
+- [Guides](#guides)
 - [Environment](#environment)
   - [Just Recipes](./just-recipes.md)
   - [Gitlab Setup](./gitlab-configuration.md)
@@ -21,6 +22,10 @@ The project uses `uv` and modern and extremely fast python package and project
 manager. The project management is simplified through the use of the `just`
 command runner. `just` follows the patterns of a `make` recipe while avoiding
 a full build system's complexity and annoyances.
+
+## Guides
+
+- [NID (NSO in Docker) to pyndev migration](./tutorial-migration-from-nid-to-pyndev.md)
 
 ## Environment
 
