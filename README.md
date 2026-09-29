@@ -134,6 +134,10 @@ Python wrapped NSO development environment
 For more information on just commands, you can review the [complete justfile
 documentation][justfile_doc].
 
+## Guides
+
+- [NID (NSO in Docker) to pyndev migration][nid-migration]
+
 ## Dev Environment Overview
 
 This is a summary explanation of the pyndev NSO development environment. For
@@ -395,6 +399,7 @@ works, and perform publicly and display publicly, and to permit others to do so.
 
 [just]: https://just.systems/man/en/introduction.html
 [justfile_doc]: ./docs/just-recipes.md
+[nid-migration]: ./docs/tutorial-migration-from-nid-to-pyndev.md
 [package-config]: ./docs/package-configuration.md
 [package-mgmt]: ./docs/package-management.md
 [reference]: ./docs/README.md
