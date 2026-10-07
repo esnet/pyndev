@@ -152,16 +152,16 @@ def create_skeleton(pkg_name: str, python: bool, template: bool, empty: bool) ->
     if python:
         # New package, assume there is only one default component
         component = get_pyndev_python_components(pkg_name)[0]
-        class_name = "".join(word.capitalize() for word in component["project"].split("_"))
-        python_path = pkg_path / "python" / component["project"]
+        class_name = "".join(word.capitalize() for word in component.project.split("_"))
+        python_path = pkg_path / "python" / component.project
         python_path.mkdir(parents=True, exist_ok=True)
         init_file = python_path / "__init__.py"
         init_file.touch()
         python_file = python_path / "main.py"
         if not python_file.exists():
             data = {
-                "name": component["name"],
-                "application": component["application"],
+                "name": component.name,
+                "application": component.application,
                 "class_name": class_name,
                 "template": template,
                 "package": pkg_name,
